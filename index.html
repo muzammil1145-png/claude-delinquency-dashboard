@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Delinquency Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--tx:#1b1f27;--mu:#6b7280;--bd:#e3e6eb;--ac:#d9480f;--ok:#2f9e6e;--wn:#e8a317;--bad:#d9480f;--gr:#e3e6eb;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171c;--card:#1e222a;--tx:#eceff4;--mu:#9aa3b2;--bd:#2d333d;--ac:#ff7a3d;--ok:#4cc38a;--wn:#f0b429;--bad:#ff7a3d;--gr:#2d333d}}
+:root[data-theme="dark"]{--bg:#14171c;--card:#1e222a;--tx:#eceff4;--mu:#9aa3b2;--bd:#2d333d;--ac:#ff7a3d;--ok:#4cc38a;--wn:#f0b429;--bad:#ff7a3d;--gr:#2d333d}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1200px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:22px;margin:0}.sub{color:var(--mu);font-size:13px;margin:2px 0 16px}
+.filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.filters label{font-size:12px;color:var(--mu);display:flex;flex-direction:column;gap:3px}
+select,button{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:7px 10px;font:inherit;font-size:14px}
+button{cursor:pointer;align-self:flex-end}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px 16px}
+.k .l{font-size:12px;color:var(--mu)}.k .v{font-size:28px;font-weight:650;margin-top:2px}.k .s{font-size:12px;color:var(--mu)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px}
+.card h2{font-size:14px;margin:0 0 2px}.card .n{font-size:12px;color:var(--mu);margin-bottom:8px}
+.cv{position:relative;height:250px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--bd);margin-bottom:14px}.tab{background:none;border:0;border-bottom:2px solid transparent;border-radius:0;padding:9px 14px;color:var(--mu);font-weight:600;align-self:auto}.tab.on{color:var(--tx);border-bottom-color:var(--ac)}.pane{display:none}.pane.on{display:block}
+@media(max-width:420px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<h1>Delinquency Dashboard</h1>
+<div class="sub" id="sub"></div>
+<div class="filters">
+<label>Location<select id="f_loc"></select></label>
+<label>Card type<select id="f_card"></select></label>
+<label>Employment<select id="f_emp"></select></label>
+<button id="reset">Reset</button>
+</div>
+<div class="tabs" role="tablist"><button class="tab on" data-p="p1">Overview</button><button class="tab" data-p="p2">Segments</button><button class="tab" data-p="p3">Risk drivers</button></div><section class="pane on" id="p1"><div class="kpis">
+<div class="card k"><div class="l">Delinquency rate</div><div class="v" id="k1"></div><div class="s" id="k1s"></div></div>
+<div class="card k"><div class="l">Avg missed payments</div><div class="v" id="k2"></div><div class="s">per account, 6 months</div></div>
+<div class="card k"><div class="l">Avg credit score</div><div class="v" id="k3"></div><div class="s" id="k3s"></div></div>
+<div class="card k"><div class="l">Avg utilization</div><div class="v" id="k4"></div><div class="s" id="k4s"></div></div>
+</div>
+<div class="grid"><div class="card"><h2>Monthly payment status</h2><div class="n">% of accounts, months 1–6</div><div class="cv"><canvas id="c6"></canvas></div></div><div class="card"><h2>By missed payments (6 mo)</h2><div class="n">% of accounts delinquent</div><div class="cv"><canvas id="c9"></canvas></div></div></div></section><section class="pane" id="p2"><div class="grid"><div class="card"><h2>By employment</h2><div class="n">% of accounts delinquent</div><div class="cv"><canvas id="c1"></canvas></div></div><div class="card"><h2>By card type</h2><div class="n">% of accounts delinquent</div><div class="cv"><canvas id="c2"></canvas></div></div><div class="card"><h2>By location</h2><div class="n">% of accounts delinquent</div><div class="cv"><canvas id="c3"></canvas></div></div></div></section><section class="pane" id="p3"><div class="grid"><div class="card"><h2>By credit score band</h2><div class="n">% of accounts delinquent</div><div class="cv"><canvas id="c4"></canvas></div></div><div class="card"><h2>By credit utilization</h2><div class="n">% of accounts delinquent</div><div class="cv"><canvas id="c5"></canvas></div></div><div class="card"><h2>By debt-to-income ratio</h2><div class="n">% of accounts delinquent</div><div class="cv"><canvas id="c7"></canvas></div></div><div class="card"><h2>By age group</h2><div class="n">% of accounts delinquent</div><div class="cv"><canvas id="c8"></canvas></div></div></div></section>
+<p class="sub" style="margin-top:16px">Source: Delinquency_prediction_dataset.csv. Employment labels "EMP", "employed" and "Employed" were merged, and "retired" capitalized. Missing income, loan balance and credit score values are excluded from their averages only.</p>
+</main>
+<script src="data/part1.js"></script>
+<script src="data/part2.js"></script>
+<script src="data/part3.js"></script>
+<script src="data/part4.js"></script>
+<script src="data/part5.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
